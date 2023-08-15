@@ -1,58 +1,57 @@
-from fastapi import Body
-
 from main import app
-from .profile_models import UserDantic, CartDantic
+from .profile_models import UserDantic, CardDantic
+from fastapi import Body
+from database import profile_service
 
 
-# Регистрация пользователя
+#  Регистрация пользователя
 @app.post('/api/register-user')
 async def user_registration(user_data: UserDantic):
-    # После регистрации выдать айди пользователя
+    checker = profile_service.phone_number(user_data.phone_number)
+
+    if checker:
+        return {"status": 0, "message": "Номер уже зарегистрирован"}
+
+    profile_service.register_user_db(user_data)
+
     return {'status': 1, 'message': 'Registration completed'}
 
 
-# Вход в аккаунт
+#  Вход в аккаунт
 @app.post('/api/login-user')
-async def login_user(phone_number: int = Body(), password: str = Body()):
-    print(phone_number, password)
-    # Проверка данных
-    checker = None
+async def login_user(phone_number: int = Body, password: str = Body):
+    checker = profile_service.login(phone_number, password)
 
-    # Если данные верны, отправляем юзер айди
-    return {'status': 1, 'message': 'Logged in'}
+    if checker:
+        return {'status': 1, 'message': checker}
+
+    return {"status": 0, "message": "Неправильные данные"}
 
 
-# Добавление карты в базу
+#  Добавить карту
 @app.post('/api/add-card')
-async def add_user_card(card_data: CartDantic):
-    # Вызов функции из бд для добавления карты в базу
-    result = card_data
-    print(card_data)
+async def add_user_card(card_data: CardDantic):
 
-    # Если успешно добавлена карта, то status 1
+    result = profile_service.add_card_user(card_data)
+
     return {'status': 1, 'message': result}
 
 
-# Вывод данных о пользователе
+#  Информация о пользователе
 @app.get('/api/user-data')
-async def get_user_data(user_id: int):
-    pass
+async def get_user_data(user_id):
+    result = profile_service.user_id_information(user_id)
+
+    if result:
+        return {'status': 1, 'message': result}
+
+    return {"status": 0, "message": "Пользователь не найден"}
 
 
-# Вывод всех или определенных карт пользователя
+#  Карты пользователя
 @app.get('/api/user-cards')
-async def get_user_cards(user_id: int, card_id: int = 0):
-    pass
+async def get_user_cards(user_id: UserDantic, card_id: CardDantic):
 
+    result = profile_service.get_all_or_exact_card_db(user_id, card_id)
 
-
-
-
-
-
-
-
-
-
-
-
+    return {'status': 1, 'message': result}

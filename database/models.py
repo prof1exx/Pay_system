@@ -52,22 +52,3 @@ class PayCategory(Base):
     category_name = Column(String, nullable=False)
 
     reg_date = Column(DateTime)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

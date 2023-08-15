@@ -1,4 +1,5 @@
 from main import app
+
 import requests
 
 
@@ -16,4 +17,5 @@ async def currency_rate():
     # Выдаем ответ
     return {'status': 1, 'rates': {'USD': usd_rate,
                                    'EUR': eur_rate,
-                                   'RUB': rub_rate}}
+                                   'RUB': rub_rate
+                                   }}

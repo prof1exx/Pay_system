@@ -9,7 +9,7 @@ class UserDantic(BaseModel):
     profile_photo: str
     name: str
     surname: str
-    phone_number: str
+    phone_number: int
     email: str
     city: str
     reg_date: datetime
@@ -17,7 +17,7 @@ class UserDantic(BaseModel):
 
 
 # Модель для карты пользователя
-class CartDantic(BaseModel):
+class CardDantic(BaseModel):
     number: int
     holder: str
     expiry_date: int
